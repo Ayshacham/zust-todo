@@ -12,3 +12,16 @@ export interface TodoTask {
   dueDate: string;
   completed: boolean;
 }
+
+export interface CreateTaskProps {
+  title: string;
+  description: string;
+  due_date?: string;
+}
+
+export interface UpdateTaskProps {
+  id: number;
+  title?: string;
+  description?: string;
+  due_date?: string;
+}
