@@ -1,0 +1,24 @@
+
+CREATE TABLE todo_list (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_todo_list_user_id ON todo_list(user_id);
+
+CREATE TABLE todos (
+    id SERIAL PRIMARY KEY,
+    list_id INTEGER NOT NULL REFERENCES todo_list(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    completed BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    due_date TIMESTAMP WITH TIME ZONE,
+    "order" INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX idx_todos_list_id ON todos(list_id);

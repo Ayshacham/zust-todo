@@ -15,10 +15,13 @@ export const toApiDate = (date: string) => {
 
 export const parseResponse = async (res: Response, errorMsg: string) => {
   if (!res.ok) {
-    const detail = await res.json().catch(() => null);
+    const body = await res.json().catch(() => null);
+    const detail =
+      body && typeof body.detail === "string" ? body.detail : null;
+    const message = detail ?? errorMsg;
 
-    console.error(errorMsg, detail);
-    throw new Error(errorMsg);
+    console.log(message);
+    throw new Error(message);
   }
   return res.json();
 };

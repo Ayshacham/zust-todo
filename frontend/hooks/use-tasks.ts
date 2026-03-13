@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { CreateTaskProps, UpdateTaskProps, TodoTask, TodoList } from "@/types/todo";
 import { useFetchWithState } from "./use-fetch-with-state";
 import { parseResponse, toApiDate } from "@/lib/utils";
+import { fetchWithAuth, API_BASE_URL } from "@/lib/api";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 export const useTasks = (listId: number) => {
@@ -16,7 +16,7 @@ export const useTasks = (listId: number) => {
   const fetchTodoList = useCallback(() =>
     fetchWithState(async () => {
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/lists/${listId}/`),
+        await fetchWithAuth(`${API_BASE_URL}/api/lists/${listId}/`),
         "Failed to fetch list"
       );
       setTodoList(data);
@@ -25,7 +25,7 @@ export const useTasks = (listId: number) => {
   const getTask = (id: number) =>
     fetchWithState(async () => {
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/tasks/?list=${listId}&id=${id}`),
+        await fetchWithAuth(`${API_BASE_URL}/api/todos/?list=${listId}&id=${id}`),
         "Failed to fetch task"
       );
       return data;
@@ -34,7 +34,7 @@ export const useTasks = (listId: number) => {
   const getTasks = useCallback(() =>
     fetchWithState(async () => {
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/tasks/?list=${listId}`),
+        await fetchWithAuth(`${API_BASE_URL}/api/todos/?list=${listId}`),
         "Failed to fetch lists"
       );
       setTasks(data);
@@ -43,7 +43,7 @@ export const useTasks = (listId: number) => {
   const createTask = ({ title, description, due_date }: CreateTaskProps) =>
     fetchWithState(async () => {
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/tasks/`, {
+        await fetchWithAuth(`${API_BASE_URL}/api/todos/`, {
           method: "POST",
           headers: JSON_HEADERS,
           body: JSON.stringify({
@@ -64,7 +64,7 @@ export const useTasks = (listId: number) => {
         Object.entries(fields).filter(([, v]) => v !== undefined)
       );
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/tasks/${id}/`, {
+        await fetchWithAuth(`${API_BASE_URL}/api/todos/${id}/`, {
           method: "PATCH",
           headers: JSON_HEADERS,
           body: JSON.stringify({
@@ -79,7 +79,7 @@ export const useTasks = (listId: number) => {
 
   const deleteTask = (id: number) =>
     fetchWithState(async () => {
-      const res = await fetch(`${BASE_URL}/api/tasks/${id}/`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/todos/${id}/`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete task");

@@ -3,4 +3,4 @@ from tasks.viewsets import TodoListViewSet, TodoViewSet
 
 router = SimpleRouter()
 router.register(r"lists", TodoListViewSet, basename="list")
-router.register(r"tasks", TodoViewSet, basename="task")
+router.register(r"todos", TodoViewSet, basename="todo")

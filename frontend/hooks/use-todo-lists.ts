@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { TodoList } from "@/types/todo";
-import { useFetchWithState } from "./use-fetch-with-state";
-import { parseResponse } from "@/lib/utils";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
+import { parseResponse } from "@/lib/utils";
+import { fetchWithAuth, API_BASE_URL } from "@/lib/api";
+
+import { useFetchWithState } from "./use-fetch-with-state";
+
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 export const useTodoLists = () => {
@@ -14,7 +16,7 @@ export const useTodoLists = () => {
   const getTodoLists = () =>
     fetchWithState(async () => {
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/lists/`),
+        await fetchWithAuth(`${API_BASE_URL}/api/lists/`),
         "Failed to fetch lists"
       );
       setLists(data);
@@ -23,7 +25,7 @@ export const useTodoLists = () => {
   const createTodoList = (name: string) =>
     fetchWithState(async () => {
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/lists/`, {
+        await fetchWithAuth(`${API_BASE_URL}/api/lists/`, {
           method: "POST",
           headers: JSON_HEADERS,
           body: JSON.stringify({ name }),
@@ -36,7 +38,7 @@ export const useTodoLists = () => {
   const updateTodoList = (id: number, name: string) =>
     fetchWithState(async () => {
       const data = await parseResponse(
-        await fetch(`${BASE_URL}/api/lists/${id}/`, {
+        await fetchWithAuth(`${API_BASE_URL}/api/lists/${id}/`, {
           method: "PUT",
           headers: JSON_HEADERS,
           body: JSON.stringify({ name }),
@@ -48,7 +50,7 @@ export const useTodoLists = () => {
 
   const deleteTodoList = (id: number) =>
     fetchWithState(async () => {
-      const res = await fetch(`${BASE_URL}/api/lists/${id}/`, {
+      const res = await fetchWithAuth(`${API_BASE_URL}/api/lists/${id}/`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete list");
