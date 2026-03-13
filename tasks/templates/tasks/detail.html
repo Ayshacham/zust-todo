@@ -1,0 +1,72 @@
+{% extends 'tasks/layout.html' %} {% block content %}
+
+<h1>Tasks</h1>
+
+<div class="flex">
+	<table>
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Description</th>
+				<th>Completed</th>
+				<th>Due Date</th>
+				<th>Order</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if tasks %} {% for task in tasks %}
+			<tr>
+				<td>{{ task.title }}</td>
+				<td>{{ task.description }}</td>
+				<td>{{ task.completed|yesno:"Done,Not done" }}</td>
+				<td>{{ task.due_date }}</td>
+				<td>{{ task.order }}</td>
+				<td>
+					<button class="update-btn" data-id="{{ task.id }}">Update</button>
+					<button class="delete-btn" data-id="{{ task.id }}">Delete</button>
+				</td>
+			</tr>
+			{% endfor %} {% else %}
+			<div>No tasks found</div>
+			{% endif %}
+		</tbody>
+	</table>
+
+	<div class="task-detail">
+		{% for task in tasks %}
+		<div
+			class="detail-panel"
+			data-list-id="{{ task.id }}"
+			style="display: none"
+		>
+			<h3>{{ task.name }}</h3>
+			<ul>
+				{% for todo in task.todo_set.all %}
+				<li>{{ todo.title }} — {{ todo.completed|yesno:"Done,Not done" }}</li>
+				{% endfor %}
+			</ul>
+		</div>
+		{% endfor %}
+		<p class="no-selection">Click "View" on a list to see its todos</p>
+	</div>
+</div>
+
+<script>
+	document
+		.querySelectorAll('.view-btn, .update-btn, .delete-btn')
+		.forEach((btn) => {
+			btn.addEventListener('click', function () {
+				const id = this.dataset.id;
+				document
+					.querySelectorAll('.detail-panel')
+					.forEach((p) => (p.style.display = 'none'));
+				const panel = document.querySelector(
+					`.detail-panel[data-list-id="${id}"]`,
+				);
+				if (panel) panel.style.display = 'block';
+				document.querySelector('.no-selection')?.remove();
+			});
+		});
+</script>
+{% endblock %}

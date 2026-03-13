@@ -1,0 +1,31 @@
+{% extends 'tasks/layout.html' %} {% block content %}
+
+<h1>Todo Lists</h1>
+
+<table>
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Created At</th>
+			<th>Updated At</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% if todoLists %} {% for todoList in todoLists %}
+		<tr>
+			<td>{{ todoList.name }}</td>
+			<td>{{ todoList.created_at }}</td>
+			<td>{{ todoList.updated_at }}</td>
+			<td>
+				<a href="{% url 'detail' todoList.id %}">View</a>
+				<button class="update-btn" data-id="{{ todoList.id }}">Update</button>
+				<button class="delete-btn" data-id="{{ todoList.id }}">Delete</button>
+			</td>
+		</tr>
+		{% endfor %} {% else %}
+		<div>No todo lists found</div>
+		{% endif %}
+	</tbody>
+</table>
+{% endblock %}
