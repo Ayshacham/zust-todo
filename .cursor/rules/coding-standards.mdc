@@ -1,0 +1,36 @@
+---
+description: Clean code, modular, KISS, DRY - always apply these standards
+alwaysApply: true
+---
+
+# Coding Standards
+
+When writing or refactoring code, always follow:
+
+## KISS (Keep It Simple, Stupid)
+- Prefer the simplest solution that works
+- Avoid over-engineering and unnecessary abstraction
+- One clear purpose per function/component
+
+## DRY (Don't Repeat Yourself)
+- Extract repeated logic into shared functions or components
+- If you copy-paste more than once, refactor
+- Shared types, utils, and UI components belong in common modules
+
+## Modularity
+- Split large files into smaller, focused modules
+- One component per file (or small related components)
+- Components should do one thing well
+- Extract reusable pieces: buttons, dialogs, form fields, layouts
+
+## File Structure
+- `components/` - UI components (group by feature: `ui/`, `lists/`, `tasks/`)
+- `lib/` or `utils/` - shared utilities, helpers
+- `types/` - shared TypeScript types
+- Keep pages thin: orchestrate, delegate to components
+
+## Anti-patterns to Avoid
+- Monolithic page components with 200+ lines
+- Duplicated JSX/CSS across files
+- Inline styles or class strings repeated everywhere
+- Logic mixed with presentation
