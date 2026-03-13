@@ -8,6 +8,7 @@ import { fetchWithAuth, API_BASE_URL } from "@/lib/api";
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 export const useTasks = (listId: number) => {
+  const [called, setCalled] = useState(false);
   const [tasks, setTasks] = useState<TodoTask[]>([]);
   const [todoList, setTodoList] = useState<TodoList | null>(null);
 
@@ -20,16 +21,8 @@ export const useTasks = (listId: number) => {
         "Failed to fetch list"
       );
       setTodoList(data);
+      setCalled(true);
     }), [fetchWithState, listId]);
-
-  const getTask = (id: number) =>
-    fetchWithState(async () => {
-      const data = await parseResponse(
-        await fetchWithAuth(`${API_BASE_URL}/api/todos/?list=${listId}&id=${id}`),
-        "Failed to fetch task"
-      );
-      return data;
-    });
 
   const getTasks = useCallback(() =>
     fetchWithState(async () => {
@@ -90,5 +83,5 @@ export const useTasks = (listId: number) => {
     Promise.all([fetchTodoList(), getTasks()]);
   }, [fetchTodoList, getTasks, listId]);
 
-  return { tasks, getTask, todoList, isLoading, error, createTask, updateTask, deleteTask };
+  return { tasks, called, todoList, isLoading, error, createTask, updateTask, deleteTask };
 };

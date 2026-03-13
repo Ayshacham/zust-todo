@@ -55,7 +55,7 @@ export function TaskForm({
 						type="submit"
 						variant="primary"
 						size="md"
-						className={showCancel ? 'flex-1' : ''}
+						className={showCancel ? 'flex-1' : 'w-full'}
 					>
 						{submitLabel}
 					</Button>

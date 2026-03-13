@@ -8,6 +8,7 @@ import { useTodoLists } from '@/hooks/use-todo-lists';
 
 import { ListForm } from '@/components/lists/ListForm';
 import { ListsTable } from '@/components/lists/ListsTable';
+
 import { PageLayout } from '@/components/layout/PageLayout';
 
 import { SidePanel } from '@/components/ui/SidePanel';
@@ -17,6 +18,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 export default function TodoListsPage() {
 	const {
 		lists,
+		called,
 		isLoading,
 		error,
 		createTodoList,
@@ -57,39 +59,38 @@ export default function TodoListsPage() {
 	return (
 		<PageLayout title="Todo Lists">
 			{error && <div className="text-red-500">{error.message}</div>}
-			<div className="flex gap-6 max-w-6xl mx-auto">
-				{isLoading ? (
-					<LoadingSpinner />
-				) : (
-					<>
-						<ListsTable
-							lists={lists}
-							onUpdate={(list) =>
-								setEditingList({ id: list.id, name: list.name })
-							}
-							onDelete={setListToDelete}
-						/>
-						<SidePanel>
-							{editingList ? (
-								<ListForm
-									mode="edit"
-									value={editingList.name}
-									onChange={(name) => setEditingList({ ...editingList, name })}
-									onSubmit={handleUpdate}
-									onCancel={() => setEditingList(null)}
-								/>
-							) : (
-								<ListForm
-									mode="create"
-									value={newListName}
-									onChange={setNewListName}
-									onSubmit={handleCreate}
-								/>
-							)}
-						</SidePanel>
-					</>
-				)}
-			</div>
+
+			{!called && isLoading ? (
+				<LoadingSpinner />
+			) : (
+				<div className="flex gap-6 max-w-6xl mx-auto">
+					<ListsTable
+						lists={lists}
+						onUpdate={(list) =>
+							setEditingList({ id: list.id, name: list.name })
+						}
+						onDelete={setListToDelete}
+					/>
+					<SidePanel>
+						{editingList ? (
+							<ListForm
+								mode="edit"
+								value={editingList.name}
+								onChange={(name) => setEditingList({ ...editingList, name })}
+								onSubmit={handleUpdate}
+								onCancel={() => setEditingList(null)}
+							/>
+						) : (
+							<ListForm
+								mode="create"
+								value={newListName}
+								onChange={setNewListName}
+								onSubmit={handleCreate}
+							/>
+						)}
+					</SidePanel>
+				</div>
+			)}
 
 			<ConfirmDialog
 				open={!!listToDelete}

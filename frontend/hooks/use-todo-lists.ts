@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { TodoList } from "@/types/todo";
 
@@ -10,17 +10,19 @@ import { useFetchWithState } from "./use-fetch-with-state";
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 export const useTodoLists = () => {
+  const [called, setCalled] = useState(false);
   const [lists, setLists] = useState<TodoList[]>([]);
   const { fetchWithState, isLoading, error } = useFetchWithState();
 
-  const getTodoLists = () =>
+  const getTodoLists = useCallback(() =>
     fetchWithState(async () => {
       const data = await parseResponse(
         await fetchWithAuth(`${API_BASE_URL}/api/lists/`),
         "Failed to fetch lists"
       );
       setLists(data);
-    });
+      setCalled(true);
+    }), [fetchWithState]);
 
   const createTodoList = (name: string) =>
     fetchWithState(async () => {
@@ -57,8 +59,7 @@ export const useTodoLists = () => {
       setLists((prev) => prev.filter((l) => l.id !== id));
     });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { getTodoLists(); }, []);
+  useEffect(() => { if (!called) { getTodoLists(); } }, [called, getTodoLists]);
 
-  return { lists, isLoading, error, createTodoList, updateTodoList, deleteTodoList };
+  return { lists, called, isLoading, error, createTodoList, updateTodoList, deleteTodoList };
 };

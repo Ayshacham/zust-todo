@@ -24,6 +24,7 @@ export default function TodoTasksPage() {
 	const {
 		tasks,
 		todoList,
+		called,
 		isLoading,
 		error,
 		createTask,
@@ -93,63 +94,61 @@ export default function TodoTasksPage() {
 		>
 			{error && <div className="text-red-500">{error.message}</div>}
 
-			<div className="flex gap-6 max-w-6xl mx-auto">
-				{isLoading ? (
-					<LoadingSpinner />
-				) : (
-					<>
-						<TasksTable
-							tasks={tasks}
-							onToggleComplete={toggleComplete}
-							onUpdate={(task) =>
-								setEditingTask({
-									id: task.id,
-									title: task.title,
-									description: task.description,
-									due_date: task.due_date,
-								})
-							}
-							onDelete={setTaskToDelete}
-						/>
-						<SidePanel>
-							{editingTask ? (
-								<TaskForm
-									mode="edit"
-									title={editingTask.title ?? ''}
-									description={editingTask.description ?? ''}
-									due_date={editingTask.due_date ?? ''}
-									onTitleChange={(title) =>
-										setEditingTask({ ...editingTask, title })
-									}
-									onDescriptionChange={(description) =>
-										setEditingTask({ ...editingTask, description })
-									}
-									onDueDateChange={(due_date) =>
-										setEditingTask({ ...editingTask, due_date })
-									}
-									onSubmit={handleUpdate}
-									onCancel={() => setEditingTask(null)}
-								/>
-							) : (
-								<TaskForm
-									mode="create"
-									title={newTask.title}
-									description={newTask.description}
-									due_date={newTask.due_date}
-									onTitleChange={(title) => setNewTask({ ...newTask, title })}
-									onDescriptionChange={(description) =>
-										setNewTask({ ...newTask, description })
-									}
-									onDueDateChange={(due_date) =>
-										setNewTask({ ...newTask, due_date })
-									}
-									onSubmit={handleCreate}
-								/>
-							)}
-						</SidePanel>
-					</>
-				)}
-			</div>
+			{!called && isLoading ? (
+				<LoadingSpinner />
+			) : (
+				<div className="flex gap-6 max-w-6xl mx-auto">
+					<TasksTable
+						tasks={tasks}
+						onToggleComplete={toggleComplete}
+						onUpdate={(task) =>
+							setEditingTask({
+								id: task.id,
+								title: task.title,
+								description: task.description,
+								due_date: task.due_date,
+							})
+						}
+						onDelete={setTaskToDelete}
+					/>
+					<SidePanel>
+						{editingTask ? (
+							<TaskForm
+								mode="edit"
+								title={editingTask.title ?? ''}
+								description={editingTask.description ?? ''}
+								due_date={editingTask.due_date ?? ''}
+								onTitleChange={(title) =>
+									setEditingTask({ ...editingTask, title })
+								}
+								onDescriptionChange={(description) =>
+									setEditingTask({ ...editingTask, description })
+								}
+								onDueDateChange={(due_date) =>
+									setEditingTask({ ...editingTask, due_date })
+								}
+								onSubmit={handleUpdate}
+								onCancel={() => setEditingTask(null)}
+							/>
+						) : (
+							<TaskForm
+								mode="create"
+								title={newTask.title}
+								description={newTask.description}
+								due_date={newTask.due_date}
+								onTitleChange={(title) => setNewTask({ ...newTask, title })}
+								onDescriptionChange={(description) =>
+									setNewTask({ ...newTask, description })
+								}
+								onDueDateChange={(due_date) =>
+									setNewTask({ ...newTask, due_date })
+								}
+								onSubmit={handleCreate}
+							/>
+						)}
+					</SidePanel>
+				</div>
+			)}
 
 			<ConfirmDialog
 				open={!!taskToDelete}
