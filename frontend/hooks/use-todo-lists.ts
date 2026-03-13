@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { TodoList } from "@/types/todo";
 import { useFetchWithState } from "./use-fetch-with-state";
+import { parseResponse } from "@/lib/utils";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 const JSON_HEADERS = { "Content-Type": "application/json" };
@@ -9,11 +10,6 @@ const JSON_HEADERS = { "Content-Type": "application/json" };
 export const useTodoLists = () => {
   const [lists, setLists] = useState<TodoList[]>([]);
   const { fetchWithState, isLoading, error } = useFetchWithState();
-
-  const parseResponse = async (res: Response, errorMsg: string) => {
-    if (!res.ok) throw new Error(errorMsg);
-    return res.json();
-  };
 
   const getTodoLists = () =>
     fetchWithState(async () => {

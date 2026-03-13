@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const useFetchWithState = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchWithState = async <T>(fn: () => Promise<T>): Promise<T | null> => {
+  const fetchWithState = useCallback(async <T>(fn: () => Promise<T>): Promise<T | null> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -15,7 +15,7 @@ export const useFetchWithState = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   return { fetchWithState, isLoading, error };
 };

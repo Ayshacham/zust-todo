@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import query
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 
@@ -24,3 +25,10 @@ class TodoViewSet(viewsets.ModelViewSet):
     queryset = Todo.objects.all()
     serializer_class = TodoSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = Todo.objects.all()
+        list_id = self.request.query_params.get("list")
+        if list_id:
+            queryset = queryset.filter(list_id=list_id)
+        return queryset

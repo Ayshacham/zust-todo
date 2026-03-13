@@ -12,6 +12,7 @@ import { PageLayout } from '@/components/layout/PageLayout';
 
 import { SidePanel } from '@/components/ui/SidePanel';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export default function TodoListsPage() {
 	const {
@@ -55,11 +56,10 @@ export default function TodoListsPage() {
 
 	return (
 		<PageLayout title="Todo Lists">
+			{error && <div className="text-red-500">{error.message}</div>}
 			<div className="flex gap-6 max-w-6xl mx-auto">
 				{isLoading ? (
-					<div className="flex justify-center items-center h-full">
-						<div className="w-10 h-10 border-t-2 border-b-2 border-gray-900 rounded-full animate-spin" />
-					</div>
+					<LoadingSpinner />
 				) : (
 					<>
 						<ListsTable

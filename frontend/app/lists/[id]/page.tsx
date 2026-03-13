@@ -1,147 +1,166 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { useState } from "react";
-import { TodoTask } from "@/types/todo";
-import { MOCK_TASKS, MOCK_LIST_NAMES } from "@/data/mock";
-import { PageLayout } from "@/components/layout/PageLayout";
-import { TasksTable } from "@/components/tasks/TasksTable";
-import { TaskForm } from "@/components/tasks/TaskForm";
-import { SidePanel } from "@/components/ui/SidePanel";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { LinkButton } from "@/components/ui/LinkButton";
+import { useState } from 'react';
+import { useParams } from 'next/navigation';
+
+import { TodoTask } from '@/types/todo';
+
+import { useTasks } from '@/hooks/use-tasks';
+
+import { TaskForm } from '@/components/tasks/TaskForm';
+import { TasksTable } from '@/components/tasks/TasksTable';
+
+import { PageLayout } from '@/components/layout/PageLayout';
+
+import { SidePanel } from '@/components/ui/SidePanel';
+import { LinkButton } from '@/components/ui/LinkButton';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 export default function TodoTasksPage() {
-  const params = useParams();
-  const listId = Number(params.id) || 1;
-  const listName = MOCK_LIST_NAMES[listId] || "My List";
+	const params = useParams();
+	const listId = Number(params.id) || 1;
 
-  const [tasks, setTasks] = useState<TodoTask[]>(
-    MOCK_TASKS[listId] ?? MOCK_TASKS[1] ?? []
-  );
-  const [editingTask, setEditingTask] = useState<Partial<TodoTask> | null>(null);
-  const [newTask, setNewTask] = useState({ title: "", description: "", dueDate: "" });
-  const [taskToDelete, setTaskToDelete] = useState<TodoTask | null>(null);
+	const {
+		tasks,
+		todoList,
+		isLoading,
+		error,
+		createTask,
+		updateTask,
+		deleteTask,
+	} = useTasks(listId);
 
-  const nextId = () =>
-    tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1;
+	const listName = todoList?.name || 'My List';
 
-  const handleCreate = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newTask.title.trim()) {
-      setTasks([
-        ...tasks,
-        {
-          id: nextId(),
-          title: newTask.title.trim(),
-          description: newTask.description.trim(),
-          dueDate: newTask.dueDate || "",
-          completed: false,
-        },
-      ]);
-      setNewTask({ title: "", description: "", dueDate: "" });
-    }
-  };
+	const [editingTask, setEditingTask] = useState<Partial<TodoTask> | null>(
+		null,
+	);
+	const [newTask, setNewTask] = useState({
+		title: '',
+		description: '',
+		due_date: '',
+	});
+	const [taskToDelete, setTaskToDelete] = useState<TodoTask | null>(null);
 
-  const handleUpdate = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingTask?.id && editingTask.title?.trim()) {
-      setTasks(
-        tasks.map((t) =>
-          t.id === editingTask.id
-            ? {
-                ...t,
-                title: editingTask.title!.trim(),
-                description: editingTask.description ?? "",
-                dueDate: editingTask.dueDate ?? "",
-              }
-            : t
-        )
-      );
-      setEditingTask(null);
-    }
-  };
+	const handleCreate = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (newTask.title.trim()) {
+			createTask({
+				title: newTask.title.trim(),
+				description: newTask.description.trim(),
+				due_date: newTask.due_date || '',
+			});
+			setNewTask({ title: '', description: '', due_date: '' });
+		}
+	};
 
-  const toggleComplete = (taskId: number) => {
-    setTasks(
-      tasks.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t))
-    );
-  };
+	const handleUpdate = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (editingTask?.id && editingTask.title?.trim()) {
+			updateTask({
+				id: editingTask.id,
+				title: editingTask.title!.trim(),
+				description: editingTask.description ?? '',
+				due_date: editingTask.due_date ?? '',
+			});
+			setEditingTask(null);
+		}
+	};
 
-  const confirmDelete = () => {
-    if (taskToDelete) {
-      setTasks(tasks.filter((t) => t.id !== taskToDelete.id));
-      setTaskToDelete(null);
-    }
-  };
+	const toggleComplete = (taskId: number) => {
+		updateTask({
+			id: taskId,
+			completed: !tasks.find((t) => t.id === taskId)?.completed,
+		});
+	};
 
-  return (
-    <PageLayout
-      title={`Tasks - ${listName}`}
-      backLink={
-        <LinkButton href="/" variant="primary">
-          ← Back to Lists
-        </LinkButton>
-      }
-    >
-      <div className="flex gap-6 max-w-6xl mx-auto">
-        <TasksTable
-          tasks={tasks}
-          onToggleComplete={toggleComplete}
-          onUpdate={(task) =>
-            setEditingTask({
-              id: task.id,
-              title: task.title,
-              description: task.description,
-              dueDate: task.dueDate,
-            })
-          }
-          onDelete={setTaskToDelete}
-        />
-        <SidePanel>
-          {editingTask ? (
-            <TaskForm
-              mode="edit"
-              title={editingTask.title ?? ""}
-              description={editingTask.description ?? ""}
-              dueDate={editingTask.dueDate ?? ""}
-              onTitleChange={(title) => setEditingTask({ ...editingTask, title })}
-              onDescriptionChange={(description) =>
-                setEditingTask({ ...editingTask, description })
-              }
-              onDueDateChange={(dueDate) =>
-                setEditingTask({ ...editingTask, dueDate })
-              }
-              onSubmit={handleUpdate}
-              onCancel={() => setEditingTask(null)}
-            />
-          ) : (
-            <TaskForm
-              mode="create"
-              title={newTask.title}
-              description={newTask.description}
-              dueDate={newTask.dueDate}
-              onTitleChange={(title) => setNewTask({ ...newTask, title })}
-              onDescriptionChange={(description) =>
-                setNewTask({ ...newTask, description })
-              }
-              onDueDateChange={(dueDate) => setNewTask({ ...newTask, dueDate })}
-              onSubmit={handleCreate}
-            />
-          )}
-        </SidePanel>
-      </div>
+	const confirmDelete = () => {
+		if (taskToDelete) {
+			deleteTask(taskToDelete.id);
+			setTaskToDelete(null);
+		}
+	};
 
-      <ConfirmDialog
-        open={!!taskToDelete}
-        title={
-          taskToDelete
-            ? `Are you sure you want to delete "${taskToDelete.title}"?`
-            : ""
-        }
-        onConfirm={confirmDelete}
-        onCancel={() => setTaskToDelete(null)}
-      />
-    </PageLayout>
-  );
+	return (
+		<PageLayout
+			title={`Tasks - ${listName}`}
+			backLink={
+				<LinkButton href="/" variant="primary">
+					← Back to Lists
+				</LinkButton>
+			}
+		>
+			{error && <div className="text-red-500">{error.message}</div>}
+
+			<div className="flex gap-6 max-w-6xl mx-auto">
+				{isLoading ? (
+					<LoadingSpinner />
+				) : (
+					<>
+						<TasksTable
+							tasks={tasks}
+							onToggleComplete={toggleComplete}
+							onUpdate={(task) =>
+								setEditingTask({
+									id: task.id,
+									title: task.title,
+									description: task.description,
+									due_date: task.due_date,
+								})
+							}
+							onDelete={setTaskToDelete}
+						/>
+						<SidePanel>
+							{editingTask ? (
+								<TaskForm
+									mode="edit"
+									title={editingTask.title ?? ''}
+									description={editingTask.description ?? ''}
+									due_date={editingTask.due_date ?? ''}
+									onTitleChange={(title) =>
+										setEditingTask({ ...editingTask, title })
+									}
+									onDescriptionChange={(description) =>
+										setEditingTask({ ...editingTask, description })
+									}
+									onDueDateChange={(due_date) =>
+										setEditingTask({ ...editingTask, due_date })
+									}
+									onSubmit={handleUpdate}
+									onCancel={() => setEditingTask(null)}
+								/>
+							) : (
+								<TaskForm
+									mode="create"
+									title={newTask.title}
+									description={newTask.description}
+									due_date={newTask.due_date}
+									onTitleChange={(title) => setNewTask({ ...newTask, title })}
+									onDescriptionChange={(description) =>
+										setNewTask({ ...newTask, description })
+									}
+									onDueDateChange={(due_date) =>
+										setNewTask({ ...newTask, due_date })
+									}
+									onSubmit={handleCreate}
+								/>
+							)}
+						</SidePanel>
+					</>
+				)}
+			</div>
+
+			<ConfirmDialog
+				open={!!taskToDelete}
+				title={
+					taskToDelete
+						? `Are you sure you want to delete "${taskToDelete.title}"?`
+						: ''
+				}
+				onConfirm={confirmDelete}
+				onCancel={() => setTaskToDelete(null)}
+			/>
+		</PageLayout>
+	);
 }
