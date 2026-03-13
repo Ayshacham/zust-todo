@@ -11,6 +11,7 @@ h1 {
   text-align: center;
   margin-top: 20px;
   font-size: 3rem;
+  text-transform: capitalize;
 }
 
 table {
@@ -19,6 +20,7 @@ table {
   margin-top: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  height: max-content;
 }
 
 th,
@@ -63,8 +65,195 @@ td a,
 
 .task-detail {
   width: 30%;
+  padding: 20px;
   height: 100%;
   background-color: #444343;
-  padding: 20px;
   border-radius: 10px;
+}
+
+.task-detail h2 {
+  margin: 0 0 20px 0;
+}
+
+.task-detail form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  background-color: #444343;
+}
+
+.task-detail form input {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.task-detail form textarea {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  resize: vertical;
+}
+
+.task-detail form input[type="date"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.task-detail form button {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #3f95f2;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #2e7bc1;
+    color: #fff;
+  }
+}
+
+.btn-create,
+.btn-back {
+  display: inline-block;
+  padding: 10px 16px;
+  background-color: #3f95f2;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-create:hover,
+.btn-back:hover {
+  background-color: #2e7bc1;
+  color: #fff;
+}
+
+.form-card {
+  max-width: 400px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-card input,
+.form-card textarea {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #444343;
+  background: #2d2d2d;
+  color: #fff;
+}
+
+.form-card button {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #3f95f2;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.form-card .btn-cancel {
+  text-align: center;
+  padding: 10px;
+  color: #c8c7c7;
+  text-decoration: none;
+}
+
+.form-card .btn-danger {
+  background-color: #dc3545;
+}
+
+.form-card .btn-danger:hover {
+  background-color: #c82333;
+}
+
+.complete-form {
+  display: inline;
+}
+
+.complete-form input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.task-completed td {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.form-actions button {
+  flex: 1;
+}
+
+#edit-task-panel .form-actions button[type="button"],
+#edit-list-panel .form-actions button[type="button"] {
+  background-color: #555454;
+}
+
+#edit-task-panel .form-actions button[type="button"]:hover,
+#edit-list-panel .form-actions button[type="button"]:hover {
+  background-color: #666;
+}
+
+#delete-dialog {
+  border: none;
+  border-radius: 10px;
+  padding: 24px;
+  background: #2d2d2d;
+  color: #fff;
+}
+
+#delete-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.dialog-actions button {
+  padding: 10px 16px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dialog-actions .btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.dialog-actions .btn-danger:hover {
+  background-color: #c82333;
+}
+
+.dialog-actions button[type="button"] {
+  background-color: #555454;
+  color: #fff;
+}
+
+.dialog-actions button[type="button"]:hover {
+  background-color: #666;
 }

@@ -2,30 +2,105 @@
 
 <h1>Todo Lists</h1>
 
-<table>
-	<thead>
-		<tr>
-			<th>Name</th>
-			<th>Created At</th>
-			<th>Updated At</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% if todoLists %} {% for todoList in todoLists %}
-		<tr>
-			<td>{{ todoList.name }}</td>
-			<td>{{ todoList.created_at }}</td>
-			<td>{{ todoList.updated_at }}</td>
-			<td>
-				<a href="{% url 'detail' todoList.id %}">View</a>
-				<button class="update-btn" data-id="{{ todoList.id }}">Update</button>
-				<button class="delete-btn" data-id="{{ todoList.id }}">Delete</button>
-			</td>
-		</tr>
-		{% endfor %} {% else %}
-		<div>No todo lists found</div>
-		{% endif %}
-	</tbody>
-</table>
+<div class="flex">
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Created At</th>
+				<th>Updated At</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% if todoLists %} {% for todoList in todoLists %}
+			<tr data-list-id="{{ todoList.id }}" data-name="{{ todoList.name }}" data-update-url="{% url 'update_list' todoList.id %}" data-delete-url="{% url 'delete_list' todoList.id %}">
+				<td>{{ todoList.name }}</td>
+				<td>{{ todoList.created_at|date:"M d, Y" }}</td>
+				<td>{{ todoList.updated_at|date:"M d, Y" }}</td>
+				<td>
+					<a href="{% url 'detail' todoList.id %}">View</a>
+					<button type="button" class="update-btn">Update</button>
+					<button type="button" class="delete-btn">Delete</button>
+				</td>
+			</tr>
+			{% endfor %} {% else %}
+			<tr><td colspan="4">No todo lists found</td></tr>
+			{% endif %}
+		</tbody>
+	</table>
+
+	<div class="task-detail">
+		<div id="add-list-panel">
+			<h2>Create List</h2>
+			<form method="post" action="{% url 'create_list' %}" id="add-list-form">
+				{% csrf_token %}
+				<input type="text" name="name" placeholder="List name" required />
+				<button type="submit">Create</button>
+			</form>
+		</div>
+		<div id="edit-list-panel" style="display: none;">
+			<h2>Edit List</h2>
+			<form method="post" id="edit-list-form">
+				{% csrf_token %}
+				<input type="text" name="name" placeholder="List name" required />
+				<div class="form-actions">
+					<button type="submit">Save</button>
+					<button type="button" id="cancel-edit-list-btn">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<dialog id="delete-list-dialog">
+	<form method="post" id="delete-list-form">
+		{% csrf_token %}
+		<p>Are you sure you want to delete this list and all its tasks?</p>
+		<div class="dialog-actions">
+			<button type="submit" class="btn-danger">Delete</button>
+			<button type="button" id="cancel-delete-list-btn">Cancel</button>
+		</div>
+	</form>
+</dialog>
+
+<script>
+document.querySelectorAll('.update-btn').forEach(btn => {
+	btn.addEventListener('click', function() {
+		const row = this.closest('tr');
+		if (!row.dataset.listId) return;
+		const name = row.dataset.name || '';
+		const updateUrl = row.dataset.updateUrl;
+
+		document.getElementById('add-list-panel').style.display = 'none';
+		const editPanel = document.getElementById('edit-list-panel');
+		editPanel.style.display = 'block';
+
+		const form = document.getElementById('edit-list-form');
+		form.action = updateUrl;
+		form.querySelector('[name="name"]').value = name;
+	});
+});
+
+document.getElementById('cancel-edit-list-btn').addEventListener('click', function() {
+	document.getElementById('edit-list-panel').style.display = 'none';
+	document.getElementById('add-list-panel').style.display = 'block';
+});
+
+document.querySelectorAll('.delete-btn').forEach(btn => {
+	btn.addEventListener('click', function() {
+		const row = this.closest('tr');
+		if (!row.dataset.deleteUrl) return;
+		const dialog = document.getElementById('delete-list-dialog');
+		const form = document.getElementById('delete-list-form');
+		form.action = row.dataset.deleteUrl;
+		dialog.showModal();
+	});
+});
+
+document.getElementById('cancel-delete-list-btn').addEventListener('click', function() {
+	document.getElementById('delete-list-dialog').close();
+});
+</script>
+
 {% endblock %}
