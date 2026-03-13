@@ -1,26 +1,32 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
-.venv/
-env/
-.env/
-
-# Django
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media/
-staticfiles/
-static_root/
+# Backend (Django)
+/backend/venv/
+/backend/.venv/
+/backend/env/
+/backend/**/__pycache__/
+/backend/**/*.py[cod]
+/backend/**/*$py.class
+/backend/**/*.so
+/backend/**/*.egg-info/
+/backend/**/*.egg
+/backend/dist/
+/backend/build/
+/backend/**/*.log
+/backend/local_settings.py
+/backend/db.sqlite3
+/backend/db.sqlite3-journal
+/backend/media/
+/backend/staticfiles/
+/backend/static_root/
+/backend/**/*.pot
+/backend/.coverage
+/backend/htmlcov/
+/backend/.pytest_cache/
+/backend/.tox/
 
 # Environment / secrets
 .env
 .env.local
+.env.*.local
 *.pem
 
 # IDE
