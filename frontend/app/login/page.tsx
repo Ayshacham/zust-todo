@@ -49,9 +49,13 @@ export default function LoginPage() {
 
 				<form onSubmit={handleSubmit} className="flex flex-col gap-4">
 					<div>
-						<label htmlFor="email" className="block text-sm text-[#c8c7c7] mb-1">
+						<label
+							htmlFor="email"
+							className="block text-sm text-[#c8c7c7] mb-1"
+						>
 							Email
 						</label>
+
 						<Input
 							id="email"
 							type="email"
@@ -63,7 +67,10 @@ export default function LoginPage() {
 						/>
 					</div>
 					<div>
-						<label htmlFor="password" className="block text-sm text-[#c8c7c7] mb-1">
+						<label
+							htmlFor="password"
+							className="block text-sm text-[#c8c7c7] mb-1"
+						>
 							Password
 						</label>
 						<Input
@@ -77,9 +84,7 @@ export default function LoginPage() {
 						/>
 					</div>
 
-					{error && (
-						<p className="text-red-500 text-sm">{error}</p>
-					)}
+					{error && <p className="text-red-500 text-sm">{error}</p>}
 
 					<Button
 						type="submit"
@@ -95,7 +100,11 @@ export default function LoginPage() {
 				<p className="mt-6 text-center text-[#c8c7c7] text-sm">
 					Don&apos;t have an account?{' '}
 					<Link
-						href={redirectTo !== '/' ? `/register?redirect=${encodeURIComponent(redirectTo)}` : '/register'}
+						href={
+							redirectTo !== '/'
+								? `/register?redirect=${encodeURIComponent(redirectTo)}`
+								: '/register'
+						}
 						className="text-[#3f95f2] hover:underline"
 					>
 						Sign up
