@@ -55,6 +55,7 @@ export default function LoginPage() {
 						>
 							Email
 						</label>
+
 						<Input
 							id="email"
 							type="email"
